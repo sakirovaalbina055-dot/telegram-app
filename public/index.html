@@ -1,218 +1,91 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LinguaGPT</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    :root {
-      --bg-color: var(--tg-theme-bg-color, #f4f4f5);
-      --text-color: var(--tg-theme-text-color, #18181b);
-      --card-bg: var(--tg-theme-secondary-bg-color, #ffffff);
-      --button-bg: var(--tg-theme-button-color, #2563eb);
-      --button-text: var(--tg-theme-button-text-color, #ffffff);
-      --hint-color: var(--tg-theme-hint-color, #71717a);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Web App - Покупка курса</title>
+    
+    <!-- Мета-тег для подтверждения домена в Lava -->
+    <meta name="lava-verify" content="db92b2e38ad68a90" />
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      margin: 0;
-      padding: 16px;
-      box-sizing: border-box;
-    }
+    <!-- Подключаем скрипт Telegram Web App API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    h1 {
-      font-size: 22px;
-      margin-bottom: 8px;
-      text-align: center;
-    }
-
-    p.subtitle {
-      text-align: center;
-      color: var(--hint-color);
-      font-size: 14px;
-      margin-top: 0;
-      margin-bottom: 20px;
-    }
-
-    .course-card {
-      background-color: var(--card-bg);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-
-    .course-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 0 0 8px 0;
-    }
-
-    .course-desc {
-      font-size: 14px;
-      color: var(--hint-color);
-      margin: 0 0 12px 0;
-      line-height: 1.4;
-    }
-
-    .course-price {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
-    .buy-btn {
-      width: 100%;
-      background-color: var(--button-bg);
-      color: var(--button-text);
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .purchased-box {
-      background-color: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      border-radius: 8px;
-      padding: 12px;
-      margin-top: 10px;
-    }
-
-    .purchased-badge {
-      color: #166534;
-      font-weight: 700;
-      font-size: 14px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .materials-content {
-      font-size: 13px;
-      color: #15803d;
-      white-space: pre-line;
-      line-height: 1.5;
-    }
-
-    .materials-content a {
-      color: #2563eb;
-      font-weight: 600;
-      text-decoration: underline;
-    }
-  </style>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .card {
+            background: var(--tg-theme-secondary-bg-color, #f1f1f1);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        button {
+            background-color: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+        }
+        button:active {
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>LinguaGPT</h1>
-  <p class="subtitle">Полезные практические курсы и интенсивы</p>
+    <div class="card">
+        <h2>Доступ к курсу</h2>
+        <p>Получите полный доступ к обучающим материалам.</p>
+        <p><strong>Стоимость: 500 руб.</strong></p>
+        <button onclick="buyCourse('course_1', 500)">Купить курс</button>
+    </div>
 
-  <div id="courses-container">Загрузка курсов...</div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Разворачиваем мини-приложение на весь экран
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+        const userId = tg.initDataUnsafe?.user?.id || 'demo_user';
 
-    const userId = tg.initDataUnsafe?.user?.id || 'demo_user';
+        async function buyCourse(courseId, amount) {
+            try {
+                const res = await fetch('/api/create-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId, courseId, amount })
+                });
 
-    const courses = [
-      {
-        id: "course_neuro_no_magic",
-        title: "Нейросети без магии: практический гид",
-        price: 350,
-        description: "Практический курс о том, как правильно писать запросы к ChatGPT и другим нейросетям, получать нужный результат и автоматизировать рутину без типичных ошибок новичков.",
-        content: `🎉 <b>Доступ открыт! Ваши материалы:</b>\n\n📍 <a href="https://t.me/+MjZ656enJfdhM2I0" target="_blank">Перейти в закрытый канал курса</a>`
-      },
-      {
-        id: "course_english_30_days",
-        title: "Английский для жизни: заговори за 30 дней",
-        price: 800,
-        description: "Разговорный мини-интенсив для снятия языкового барьера: реальные ситуации, современная лексика, произношение и практика общения без зубрёжки правил.",
-        content: `🎉 <b>Доступ открыт! Ваши материалы:</b>\n\n📍 <a href="https://t.me/+n0Hy4vRMR-dkZTc0" target="_blank">Перейти в закрытый канал курса</a>`
-      },
-      {
-        id: "course_finance_foundation",
-        title: "Финансовый фундамент: от хаоса к системе",
-        price: 490,
-        description: "Курс по личным финансам: бюджет без тоски, подушка безопасности, защита денег от инфляции и избавление от импульсивных трат.",
-        content: `🎉 <b>Доступ открыт! Ваши материалы:</b>\n\n📍 <a href="https://t.me/+3Jh0Y6ura5k3N2Y0" target="_blank">Перейти в закрытый канал курса</a>`
-      }
-    ];
-
-    async function checkAccessAndRender() {
-      let userPurchases = [];
-
-      try {
-        const response = await fetch(`/api/user-purchases?userId=${userId}`);
-        if (response.ok) {
-          const data = await response.json();
-          userPurchases = data.purchases || [];
+                const data = await res.json();
+                
+                if (data.paymentUrl) {
+                    // Открываем платежную ссылку во внешнем браузере или через Telegram
+                    tg.openLink(data.paymentUrl);
+                } else {
+                    alert('Ошибка при формировании счета на оплату');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Ошибка соединения с сервером');
+            }
         }
-      } catch (e) {
-        console.error("Ошибка проверки покупок:", e);
-      }
-
-      const container = document.getElementById('courses-container');
-      container.innerHTML = '';
-
-      courses.forEach(course => {
-        const isPurchased = userPurchases.includes(course.id);
-
-        const card = document.createElement('div');
-        card.className = 'course-card';
-
-        let actionAreaHTML = '';
-        if (isPurchased) {
-          actionAreaHTML = `
-            <div class="purchased-box">
-              <div class="purchased-badge">✅ Курс приобретен</div>
-              <div class="materials-content">${course.content}</div>
-            </div>
-          `;
-        } else {
-          actionAreaHTML = `
-            <div class="course-price">${course.price} ₽</div>
-            <button class="buy-btn" onclick="buyCourse('${course.id}', ${course.price})">Купить курс</button>
-          `;
-        }
-
-        card.innerHTML = `
-          <div class="course-title">${course.title}</div>
-          <div class="course-desc">${course.description}</div>
-          ${actionAreaHTML}
-        `;
-
-        container.appendChild(card);
-      });
-    }
-
-    async function buyCourse(courseId, amount) {
-      try {
-        const res = await fetch('/api/create-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, courseId, amount })
-        });
-
-        const data = await res.json();
-        if (data.paymentUrl) {
-          tg.openLink(data.paymentUrl);
-        } else {
-          alert('Ошибка при формировании счета на оплату');
-        }
-      } catch (err) {
-        alert('Ошибка соединения с сервером');
-      }
-    }
-
-    checkAccessAndRender();
-  </script>
+    </script>
 </body>
 </html>
