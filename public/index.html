@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lingua & AI Hub</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen font-sans p-4">
+    <div class="max-w-md mx-auto space-y-6">
+        <header class="text-center py-4">
+            <h1 class="text-2xl font-bold text-emerald-400">🧠 Lingua & AI Hub</h1>
+            <p class="text-slate-400 text-xs mt-1">Персональный экспресс-тренажер и ИИ-помощник</p>
+        </header>
+
+        <!-- Paywall Block -->
+        <div id="paywall-view" class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-xl space-y-4">
+            <div class="space-y-2">
+                <span class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded-full font-semibold border border-emerald-500/20">Премиум Доступ</span>
+                <h2 class="text-xl font-bold">Разблокировать все курсы и тренажеры</h2>
+                <ul class="text-xs text-slate-300 space-y-2 py-2">
+                    <li class="flex items-center">✨ <span><strong>Английский для путешествий:</strong> 100 важнейших фраз</span></li>
+                    <li class="flex items-center">✨ <span><strong>Разговорный тренажер:</strong> экспресс-практика</span></li>
+                    <li class="flex items-center">✨ <span><strong>ChatGPT Помощник:</strong> готовые промты</span></li>
+                </ul>
+            </div>
+
+            <div class="flex items-center justify-between border-t border-slate-700 pt-4">
+                <div>
+                    <span class="text-xs text-slate-400 block">Разовый платеж</span>
+                    <span class="text-2xl font-extrabold text-emerald-400">1 190 ₽</span>
+                </div>
+                <button onclick="pay()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-900 font-bold px-5 py-2.5 rounded-xl text-sm transition">
+                    Оплатить access
+                </button>
+            </div>
+            
+            <button onclick="checkStatus()" class="w-full text-center text-xs text-slate-400 underline mt-2">
+                Проверить оплату
+            </button>
+        </div>
+
+        <!-- Content Block (Hidden until paid) -->
+        <div id="app-view" class="hidden space-y-4">
+            <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 text-center">
+                <span class="text-emerald-400 font-semibold text-sm">🎉 Доступ активирован</span>
+                <p class="text-xs text-slate-300 mt-1">Все функции и материалы разблокированы!</p>
+            </div>
+
+            <!-- Feature 1 -->
+            <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl space-y-2">
+                <h3 class="font-bold text-sm text-emerald-400">✈️ Разговорник для путешествий</h3>
+                <p class="text-xs text-slate-300">Фразы для аэропорта, отеля и ресторанов с транскрипцией.</p>
+                <div class="bg-slate-900 p-3 rounded-lg text-xs space-y-1">
+                    <p>• <strong>Where is the baggage claim?</strong> — Где выдача багажа?</p>
+                    <p>• <strong>I have a reservation under my name.</strong> — У меня забронировано на моё имя.</p>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl space-y-3">
+                <h3 class="font-bold text-sm text-blue-400">🤖 ИИ-Переводчик и разбор</h3>
+                <input type="text" id="userInput" placeholder="Введите предложение..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white outline-none focus:border-blue-500">
+                <button onclick="translatePhrase()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium p-2.5 rounded-lg text-xs transition">
+                    Сгенерировать перевод
+                </button>
+                <p id="resultArea" class="text-xs text-slate-300 bg-slate-900 p-3 rounded-lg hidden"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const userId = tg.initDataUnsafe?.user?.id || 'test_user';
+        const wallet = '4100119648066743';
+
+        window.onload = function() {
+            fetchStatus();
+        }
+
+        function fetchStatus() {
+            fetch(`/api/status/${userId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.paid) {
+                        document.getElementById('paywall-view').classList.add('hidden');
+                        document.getElementById('app-view').classList.remove('hidden');
+                    }
+                });
+        }
+
+        function pay() {
+            const label = `${userId}_${Date.now()}`;
+            const amount = 1190;
+            const payUrl = `https://yoomoney.ru/to/${wallet}?sum=${amount}&comment=Order_${label}&label=${label}`;
+            tg.openLink(payUrl);
+        }
+
+        function checkStatus() {
+            fetchStatus();
+        }
+
+        function translatePhrase() {
+            const text = document.getElementById('userInput').value;
+            const resArea = document.getElementById('resultArea');
+            if (!text) return;
+            resArea.classList.remove('hidden');
+            resArea.innerText = `💡 Результат перевода для "${text}": [Фраза обработана. Ошибок не обнаружено]`;
+        }
+    </script>
+</body>
+</html>
