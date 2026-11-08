@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Web App - Покупка курса</title>
+    <title>LinguaGPT — Образовательные курсы</title>
     
     <!-- Мета-тег для подтверждения домена в Lava -->
     <meta name="lava-verify" content="db92b2e38ad68a90" />
 
-    <!-- Подключаем скрипт Telegram Web App API -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
@@ -21,16 +20,20 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            max-width: 340px;
+            margin: auto;
+            text-align: center;
         }
         .card {
             background: var(--tg-theme-secondary-bg-color, #f1f1f1);
             padding: 20px;
             border-radius: 12px;
-            text-align: center;
-            width: 100%;
-            max-width: 320px;
+            margin-bottom: 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         button {
@@ -48,20 +51,41 @@
         button:active {
             opacity: 0.8;
         }
+        footer {
+            font-size: 11px;
+            color: #888;
+            margin-top: 20px;
+            line-height: 1.4;
+        }
+        footer a {
+            color: inherit;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>Доступ к курсу</h2>
-        <p>Получите полный доступ к обучающим материалам.</p>
-        <p><strong>Стоимость: 500 руб.</strong></p>
-        <button onclick="buyCourse('course_1', 500)">Купить курс</button>
+    <div class="container">
+        <div class="card">
+            <h2>Доступ к курсу</h2>
+            <p>Практические обучающие материалы.</p>
+            <p><strong>Стоимость: 500 руб.</strong></p>
+            <button onclick="buyCourse('course_1', 500)">Купить курс</button>
+        </div>
+
+        <footer>
+            <p><strong>Контакты:</strong> support@ling-gpt.ru | Telegram: @support</p>
+            <p>
+                <a href="#" onclick="alert('Условия возврата: возврат средств возможен в течение 14 дней после покупки до начала прохождения курса.'); return false;">Условия возврата</a> | 
+                <a href="#" onclick="alert('Оплачивая курс, вы соглашаетесь с условиями публичной оферты и политикой обработки персональных данных.'); return false;">Оферта</a>
+            </p>
+            <p>© 2026 LinguaGPT. Все права защищены.</p>
+        </footer>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Разворачиваем мини-приложение на весь экран
+        tg.expand();
 
         const userId = tg.initDataUnsafe?.user?.id || 'demo_user';
 
@@ -76,7 +100,6 @@
                 const data = await res.json();
                 
                 if (data.paymentUrl) {
-                    // Открываем платежную ссылку во внешнем браузере или через Telegram
                     tg.openLink(data.paymentUrl);
                 } else {
                     alert('Ошибка при формировании счета на оплату');
