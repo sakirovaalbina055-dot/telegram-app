@@ -3,109 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinguaGPT — Образовательные курсы</title>
-    
-    <!-- Мета-тег для подтверждения домена в Lava -->
-    <meta name="lava-verify" content="db92b2e38ad68a90" />
-
+    <title>LinguaGPT Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     <style>
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #0f172a);
+            --text-color: var(--tg-theme-text-color, #f8fafc);
+            --hint-color: var(--tg-theme-hint-color, #94a3b8);
+            --button-color: var(--tg-theme-button-color, #6366f1);
+            --button-text: var(--tg-theme-button-text-color, #ffffff);
+            --card-bg: #1e293b;
+        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            box-sizing: border-box;
+            padding: 16px;
         }
-        .container {
-            width: 100%;
-            max-width: 340px;
-            margin: auto;
-            text-align: center;
-        }
-        .card {
-            background: var(--tg-theme-secondary-bg-color, #f1f1f1);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
+        h1 { font-size: 22px; text-align: center; margin-bottom: 4px; }
+        .subtitle { text-align: center; color: var(--hint-color); font-size: 14px; margin-bottom: 20px; }
+        .grid { display: flex; flex-direction: column; gap: 14px; }
+        .card { background: var(--card-bg); border-radius: 14px; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .card h3 { margin: 0 0 8px 0; font-size: 18px; }
+        .card p { margin: 0 0 12px 0; color: var(--hint-color); font-size: 13px; line-height: 1.4; }
+        .price { font-weight: bold; font-size: 16px; color: #38bdf8; margin-bottom: 12px; }
         button {
-            background-color: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
-        }
-        button:active {
-            opacity: 0.8;
-        }
-        footer {
-            font-size: 11px;
-            color: #888;
-            margin-top: 20px;
-            line-height: 1.4;
-        }
-        footer a {
-            color: inherit;
-            text-decoration: underline;
+            background-color: var(--button-color);
+            color: var(--button-text);
+            border: none; border-radius: 10px;
+            padding: 12px; width: 100%;
+            font-size: 15px; font-weight: 600; cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <h1>LinguaGPT Catalog</h1>
+    <div class="subtitle">Учись. Применяй. Развивайся.</div>
+
+    <div class="grid">
         <div class="card">
-            <h2>Доступ к курсу</h2>
-            <p>Практические обучающие материалы.</p>
-            <p><strong>Стоимость: 500 руб.</strong></p>
-            <button onclick="buyCourse('course_1', 500)">Купить курс</button>
+            <h3>🇬🇧 Английский для жизни</h3>
+            <p>Заговори за 30 дней: практический курс для уверенного общения.</p>
+            <div class="price">990 ₽</div>
+            <button onclick="buyCourse(990, 'eng_30_days')">Купить курс</button>
         </div>
 
-        <footer>
-            <p><strong>Контакты:</strong> support@ling-gpt.ru | Telegram: @support</p>
-            <p>
-                <a href="#" onclick="alert('Условия возврата: возврат средств возможен в течение 14 дней после покупки до начала прохождения курса.'); return false;">Условия возврата</a> | 
-                <a href="#" onclick="alert('Оплачивая курс, вы соглашаетесь с условиями публичной оферты и политикой обработки персональных данных.'); return false;">Оферта</a>
-            </p>
-            <p>© 2026 LinguaGPT. Все права защищены.</p>
-        </footer>
+        <div class="card">
+            <h3>🤖 Нейросети без магии</h3>
+            <p>Практический гид по работе с GPT-промптами для учебы и карьеры.</p>
+            <div class="price">790 ₽</div>
+            <button onclick="buyCourse(790, 'ai_prompts_guide')">Купить курс</button>
+        </div>
+
+        <div class="card">
+            <h3>📈 Финансовый фундамент</h3>
+            <p>От хаоса к системе: управление личным бюджетом и инвестиции.</p>
+            <div class="price">1290 ₽</div>
+            <button onclick="buyCourse(1290, 'fin_fundament')">Купить курс</button>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const userId = tg.initDataUnsafe?.user?.id || 'demo_user';
-
-        async function buyCourse(courseId, amount) {
+        async function buyCourse(amount, courseId) {
+            const userId = tg.initDataUnsafe?.user?.id || 'guest';
             try {
-                const res = await fetch('/api/create-payment', {
+                const response = await fetch('/api/payment/create', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId, courseId, amount })
+                    body: JSON.stringify({ amount, orderId: `${courseId}_${userId}_${Date.now()}` })
                 });
-
-                const data = await res.json();
-                
-                if (data.paymentUrl) {
-                    tg.openLink(data.paymentUrl);
+                const data = await response.json();
+                if (data.success && data.paymentUrl) {
+                    window.location.href = data.paymentUrl;
                 } else {
-                    alert('Ошибка при формировании счета на оплату');
+                    alert('Ошибка создания платежа');
                 }
-            } catch (err) {
-                console.error(err);
+            } catch (e) {
                 alert('Ошибка соединения с сервером');
             }
         }
